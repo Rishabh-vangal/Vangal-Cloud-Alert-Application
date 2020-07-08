@@ -1,50 +1,62 @@
 import React, { Component } from 'react';
 // import Safe from "react-safe";
 import GoogleLogin from 'react-google-login';
+import GoogleLogout from 'react-google-login';
+import MicrosoftLogin from "react-microsoft-login";
+
+import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 
 
-const responseGoogle = (response) => {
-    console.log(response);
-}
+const CLIENT_ID_GOOGLE = "825269243215-cblac6ek5fl7virhp4ci0puhgvakr83c.apps.googleusercontent.com";
+const CLIENT_ID_MICROSOFT = "1854d86b-8e91-4db9-846e-0da965c041d6";
 
+
+const authHandler = (err, data) => {
+    console.log(err, data);
+  };
 
 class login extends Component {
     
-    // contructor(props) {
-    //     super(props)
-    //     this.state = {
-    //         isSignedIn: false,
-    //     }
-    // }
+    constructor(props) {
+        super(props);
     
-
-    componentDidMount() {
+        this.state = {
+          isLogined: false,
+          accessToken: ''
+        };
     
-        const script = document.createElement("script");
-        script.src = "loginscriptA.js";
-        script.async = true;
-        document.body.appendChild(script);
-
-        const script2 = document.createElement("script");
-        script2.src = "loginscriptB.js";
-        script2.async = true;
-        document.body.appendChild(script2);
+        this.login = this.login.bind(this);
+        this.handleLoginFailure = this.handleLoginFailure.bind(this);
+        this.logout = this.logout.bind(this);
+        this.handleLogoutFailure = this.handleLogoutFailure.bind(this);
     }
 
-    getContent() {
-        if (this.state.isSignedIn) {
-          return <p>hello user, you're signed in </p>
-        } else {
-          return (
-            <div>
-              <p>You are not signed in. Click here to sign in.</p>
-              <button id="loginButton">Login with Google</button>
-            </div>
-          )
+    
+
+    login (response) {
+        if(response.Zi.access_token){
+          this.setState(state => ({
+            isLogined: true,
+            accessToken: response.Zi.access_token
+          }));
         }
-        
-    }
+      }
 
+      logout (response) {
+        this.setState(state => ({
+          isLogined: false,
+          accessToken: ''
+        }));
+      }
+    
+      handleLoginFailure (response) {
+        alert('Failed to log in')
+      }
+    
+      handleLogoutFailure (response) {
+        alert('Failed to log out')
+      }
+    
     render() {
         return (
             <div>
@@ -60,13 +72,35 @@ class login extends Component {
                 
 
 
-                <GoogleLogin
+                {/* <GoogleLogin
                     clientId="825269243215-cblac6ek5fl7virhp4ci0puhgvakr83c.apps.googleusercontent.com"
                     buttonText="Login"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}
                     cookiePolicy={'single_host_origin'}
-                />
+                /> */}
+
+
+                { this.state.isLogined ?
+                        <GoogleLogout
+                        clientId={CLIENT_ID_GOOGLE}
+                        buttonText='Logout'
+                        onLogoutSuccess={ this.logout }
+                        onFailure={ this.handleLogoutFailure }
+                        >
+                        </GoogleLogout>: <GoogleLogin
+                        clientId={CLIENT_ID_GOOGLE}
+                        buttonText='Login'
+                        onSuccess={ this.login }
+                        onFailure={ this.handleLoginFailure }
+                        cookiePolicy={ 'single_host_origin' }
+                        responseType='code,token'
+                        />
+                    }
+
+                    <MicrosoftLogin clientId={CLIENT_ID_MICROSOFT} authCallback={authHandler} />
+
+                    <AmplifyAmazonButton />
             </div>
 
             
