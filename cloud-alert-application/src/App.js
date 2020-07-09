@@ -35,6 +35,8 @@ class App extends React.Component {
     const name = profile.getName();
     const email = profile.getEmail();
 
+    console.log(googleUser);
+
     const state = ({
       loggedIn: true,
       error: '',

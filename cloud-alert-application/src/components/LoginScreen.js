@@ -5,16 +5,16 @@ import GoogleLogin from 'react-google-login';
 function LoginScreen(props) {
 
   const onSignInAzure = (err, data) => {
-    let loggedIn = false;
-    if (err == null){
-      loggedIn = true;
-    }   
+    let email = data.authResponseWithAccessToken.account.userName;
+    let name = data.authResponseWithAccessToken.account.name;
+    let loggedIn = err == null;
     const state = ({
       loggedIn: loggedIn,
       error: err,
-      name: '',
-      email: ''
+      name: name,
+      email: email
     })
+    console.log(data.authResponseWithAccessToken)   
     props.onSignIn(state);
   };
 
