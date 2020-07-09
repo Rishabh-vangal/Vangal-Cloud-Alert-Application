@@ -55,6 +55,14 @@ class App extends React.Component {
     this.onSignInGoogle = this.onSignInGoogle.bind(this);
   }
 
+  async componentDidMount() {
+    const url = "";
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+
+  }
+
   onSignIn = (state) => {
     console.log(state);
     this.setState({
@@ -67,11 +75,11 @@ class App extends React.Component {
   }
 
   onSignInGoogle(googleUser){
+    console.log(googleUser);
     const profile = googleUser.getBasicProfile();
     const name = profile.getName();
     const email = profile.getEmail();
 
-    console.log(googleUser);
 
     const state = ({
       loggedIn: true,

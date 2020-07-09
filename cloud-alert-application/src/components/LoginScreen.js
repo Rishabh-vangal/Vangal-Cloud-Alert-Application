@@ -38,7 +38,7 @@ function LoginScreen(props) {
           />
         <br/>
         <GoogleLogin 
-          clientId={props.clientID_AWS} 
+          clientId={props.clientID_Google} 
           buttonId="Sign in with Google"
           onSuccess={props.onSignInGoogle}
           onFailure={props.onSignInGoogle}
