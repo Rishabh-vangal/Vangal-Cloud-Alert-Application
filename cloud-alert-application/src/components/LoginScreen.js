@@ -14,7 +14,9 @@ function LoginScreen(props) {
       loggedIn: loggedIn,
       error: err,
       name: name,
-      email: email
+      email: email,
+      service: 'Azure',
+      data: data
     })
     props.onSignIn(state);
   };

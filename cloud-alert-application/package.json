@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "aws-amplify": "^3.0.19",
     "googleapis": "^52.1.0",
+    "http2": "^3.3.7",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-google-login": "^5.1.20",
