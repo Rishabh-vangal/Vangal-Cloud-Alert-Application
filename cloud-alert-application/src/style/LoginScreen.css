@@ -1,0 +1,17 @@
+.center {
+    margin: auto;
+    position:absolute;
+    top:50%;
+    left:50%;
+    -ms-transform:translate(-50%, -50%); 
+    transform:translate(-50%, -50%);
+    padding:10px; 
+    
+    width:325px; 
+    background:#f0f0f0; 
+    border-radius:25px; 
+}
+
+body {
+    background:#8d4ccf;    
+}

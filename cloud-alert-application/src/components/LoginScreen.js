@@ -2,6 +2,7 @@ import React from 'react';
 import MicrosoftLogin from "react-microsoft-login";
 import GoogleLogin from 'react-google-login';
 import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
+import './../style/LoginScreen.css';
 
 function LoginScreen(props) {
 
@@ -24,28 +25,36 @@ function LoginScreen(props) {
   
 
   return (
-    <div>
-      <h1>Vangal Cloud Alert Application</h1>
-        <AmplifyAmazonButton 
-          clientId={props.clientID_AWS}
-          buttonId="Sign in with Google"
-          onSuccess={onSignInAzure}
-          onFailure={onSignInAzure}
-          authCallback={onSignInAzure}
-        />
-        <br/>
-        <MicrosoftLogin 
-          clientId={props.clientID_Azure} 
-          authCallback={onSignInAzure}
+    <div class='center' >
+      <center>
+          <h1>Vangal Cloud Alert</h1>
+      </center>
+      <br/>
+      <div style={{margin: 'auto', width:'215px'}}>
+          <AmplifyAmazonButton 
+            clientId={props.clientID_AWS}
+            buttonId="Sign in with Google"
+            onSuccess={onSignInAzure}
+            onFailure={onSignInAzure}
+            authCallback={onSignInAzure}
           />
+          {/* <br/> */}
+          <MicrosoftLogin 
+            clientId={props.clientID_Azure} 
+            authCallback={onSignInAzure}
+            style={{margin: 'auto', width:'190px'}}
+          />
+          <br/>
+          <GoogleLogin 
+            clientId={props.clientID_Google} 
+            buttonId="Sign in with Google"
+            onSuccess={props.onSignInGoogle}
+            onFailure={props.onSignInGoogle}
+            cookiePolicy={'single_host_origin'}
+            style={{margin: 'auto', width:'190px'}}
+          />
+        </div>
         <br/>
-        <GoogleLogin 
-          clientId={props.clientID_Google} 
-          buttonId="Sign in with Google"
-          onSuccess={props.onSignInGoogle}
-          onFailure={props.onSignInGoogle}
-          cookiePolicy={'single_host_origin'}
-        />
     </div>
   );  
 }
