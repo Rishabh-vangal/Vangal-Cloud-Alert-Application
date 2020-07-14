@@ -42,6 +42,45 @@ class App extends React.Component {
     const name = profile.getName();
     const email = profile.getEmail();
 
+    let bearer_token = 'Bearer ' + googleUser.accessToken;
+    console.log(bearer_token);
+
+    let json_data = [];
+
+    try {
+      const requestOptions = {
+          method: 'GET',
+          headers: {'Authorization': bearer_token}
+      };
+      fetch('https://cloudbilling.googleapis.com/v1/billingAccounts', requestOptions)
+          .then(async response => {
+              const data = await response.json();
+              if (data.billingAccounts) {
+                const project_id = data.billingAccounts[0].name;
+                let url = 'https://cloudbilling.googleapis.com/v1/' + project_id + '/projects';
+                console.log(url);
+                fetch(url, requestOptions)
+                    .then(async response => {
+                        const data = await response.json();
+                        
+                        const state = ({
+                          loggedIn: true,
+                          error: '',
+                          name: name,
+                          email: email,
+                          service: 'Google',
+                          data: data.projectBillingInfo
+                        })
+                    
+                        this.onSignIn(state);
+
+                });
+              } 
+      });
+    } 
+    catch(error){
+ 
+    }
 
     const state = ({
       loggedIn: true,
@@ -49,11 +88,16 @@ class App extends React.Component {
       name: name,
       email: email,
       service: 'Google',
-      data: googleUser
+      data: ''
     })
+
     this.onSignIn(state);
+
+    
   }
 
+
+  
   render() {
     if (!this.state.loggedIn){
       // Login Page

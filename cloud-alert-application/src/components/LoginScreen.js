@@ -22,8 +22,6 @@ function LoginScreen(props) {
     props.onSignIn(state);
   };
 
-  
-
   return (
     <div class='center' >
       <center>
@@ -52,6 +50,9 @@ function LoginScreen(props) {
             onFailure={props.onSignInGoogle}
             cookiePolicy={'single_host_origin'}
             style={{margin: 'auto', width:'190px'}}
+            // scope="https://www.googleapis.com/auth/cloud-platform"
+            // scope = "https://www.googleapis.com/auth/cloud-billing"
+            scope = "https://www.googleapis.com/auth/cloud-billing https://www.googleapis.com/auth/cloud-platform"
           />
         </div>
         <br/>
