@@ -1,8 +1,11 @@
 import React from 'react';
+import AmazonButton from './AmazonButton.js'; 
 import MicrosoftLogin from "react-microsoft-login";
 import GoogleLogin from 'react-google-login';
 import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 import './../style/LoginScreen.css';
+
+
 
 function LoginScreen(props) {
 
@@ -11,6 +14,39 @@ function LoginScreen(props) {
     let email = data.authResponseWithAccessToken.account.userName;
     let name = data.authResponseWithAccessToken.account.name;
     let loggedIn = err == null;
+    
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        mode: 'no-cors',
+        body: 'client_id=1854d86b-8e91-4db9-846e-0da965c041d6&scope=https://graph.microsoft.com/.default&client_secret=A8-q.GIe4_.J89_-cKglpduI9_jPJ-ijwj&grant_type=client_credentials'
+        // body: JSON.stringify(
+        // {
+        //   client_id: '1854d86b-8e91-4db9-846e-0da965c041d6',
+        //   scope: 'https://graph.microsoft.com/.default',
+        //   client_secret: 'A8-q.GIe4_.J89_-cKglpduI9_jPJ-ijwj',
+        //   grant_type: 'client_credentials'})
+    };
+    console.log(requestOptions);
+    fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', requestOptions)
+      // .then(async (response)=>response.json())
+      //   .then(async (responseJson)=> {
+      //     console.log(responseJson)
+      // });    
+    
+    // .then(async response => {
+    //       // const data = await response;
+    //       const data = await response.json();
+    //       console.log(data);
+            
+    // })
+    .then(response => console.log(response))
+    .catch(error => console.log(error));
+
+
     const state = ({
       loggedIn: loggedIn,
       error: err,
@@ -22,6 +58,23 @@ function LoginScreen(props) {
     props.onSignIn(state);
   };
 
+  const onSignInAmazon = (data) => {
+    console.log(data);
+
+    let email = data.profile.email;
+    let name = data.profile.name;
+    let loggedIn = true;
+    const state = ({
+      loggedIn: loggedIn,
+      error: null,
+      name: name,
+      email: email,
+      service: 'Amazon',
+      data: data
+    })
+    props.onSignIn(state);
+  }
+ 
   return (
     <div class='center' >
       <center>
@@ -29,18 +82,23 @@ function LoginScreen(props) {
       </center>
       <br/>
       <div style={{margin: 'auto', width:'215px'}}>
-          <AmplifyAmazonButton 
-            clientId={props.clientID_AWS}
-            buttonId="Sign in with Google"
-            onSuccess={onSignInAzure}
-            onFailure={onSignInAzure}
-            authCallback={onSignInAzure}
-          />
-          {/* <br/> */}
+
+          <AmazonButton
+              provider='amazon'
+              appId={props.clientID_AWS}
+              onLoginSuccess={onSignInAmazon}
+              onLoginFailure={onSignInAmazon}
+              onLogoutSuccess={onSignInAmazon}
+              // getInstance={this.setNodeRef.bind(this, 'amazon')}
+              key={'amazon'}>
+            Login with Amazon
+          </AmazonButton>
+          <br/>
           <MicrosoftLogin 
             clientId={props.clientID_Azure} 
             authCallback={onSignInAzure}
             style={{margin: 'auto', width:'190px'}}
+            IdentityPoolId='us-east-1:945b28bc-b4a5-454e-8ca8-b588fe415b4e'
           />
           <br/>
           <GoogleLogin 
@@ -50,8 +108,6 @@ function LoginScreen(props) {
             onFailure={props.onSignInGoogle}
             cookiePolicy={'single_host_origin'}
             style={{margin: 'auto', width:'190px'}}
-            // scope="https://www.googleapis.com/auth/cloud-platform"
-            // scope = "https://www.googleapis.com/auth/cloud-billing"
             scope = "https://www.googleapis.com/auth/cloud-billing https://www.googleapis.com/auth/cloud-platform"
           />
         </div>

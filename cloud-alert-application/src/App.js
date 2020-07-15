@@ -34,6 +34,7 @@ class App extends React.Component {
       service: state.service,
       data: state.data
     })
+    console.log("wassup");
   }
 
   onSignInGoogle(googleUser){
@@ -105,7 +106,8 @@ class App extends React.Component {
     }
     else {
       switch(this.state.service) {
-        case 'AWS':
+        case 'Amazon':
+            return <AzureScreen data={this.state}/>
           break;
         case 'Azure':
           return <AzureScreen data={this.state}/> 

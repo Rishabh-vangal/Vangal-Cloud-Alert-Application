@@ -10,12 +10,6 @@ function AzureScreen(props) {
             json_data.push(<h3>Billing Account: {props.data.data[i].billingAccountName}</h3>);
             json_data.push(<br/>);
         }
-        for (let i = 0; i < props.data.data.length; i++) {
-            json_data.push(<h2>Project Name: {props.data.data[i].name}</h2>);
-            json_data.push(<h3>Project ID: {props.data.data[i].projectId}</h3>);
-            json_data.push(<h3>Billing Account: {props.data.data[i].billingAccountName}</h3>);
-            json_data.push(<br/>);
-        }
     }
     else {
         json_data.push(<h3>No Billing Accounts associated with this account</h3>);
