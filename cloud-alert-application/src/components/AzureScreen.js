@@ -18,7 +18,8 @@ function AzureScreen(props) {
 
     return (
         <div>
-            <h1>You're logged in with {props.data.service}</h1>
+            <h1>Welcome {props.data.name}</h1>
+            <h2>You're logged in with {props.data.service}</h2>
             <br/>
             {json_data}
             

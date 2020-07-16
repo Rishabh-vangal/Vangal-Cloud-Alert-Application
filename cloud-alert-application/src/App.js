@@ -34,7 +34,6 @@ class App extends React.Component {
       service: state.service,
       data: state.data
     })
-    console.log("wassup");
   }
 
   onSignInGoogle(googleUser){

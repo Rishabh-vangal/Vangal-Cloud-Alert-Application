@@ -5,6 +5,8 @@ import GoogleLogin from 'react-google-login';
 import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 import './../style/LoginScreen.css';
 
+import ReactLoginMS from 'react-ms-login';
+
 
 
 function LoginScreen(props) {
@@ -61,9 +63,21 @@ function LoginScreen(props) {
   const onSignInAmazon = (data) => {
     console.log(data);
 
+    let CostExplorer = require('aws-cost-explorer');
+    var ce = CostExplorer();
+    ce.getMonthToDateCosts(null, function(err, data) {
+      if (err) {
+          console.log(err);
+      } else {
+          console.dir(data, { depth: null });
+      }
+    });
     let email = data.profile.email;
     let name = data.profile.name;
     let loggedIn = true;
+
+
+
     const state = ({
       loggedIn: loggedIn,
       error: null,
@@ -97,8 +111,9 @@ function LoginScreen(props) {
           <MicrosoftLogin 
             clientId={props.clientID_Azure} 
             authCallback={onSignInAzure}
-            style={{margin: 'auto', width:'190px'}}
-            IdentityPoolId='us-east-1:945b28bc-b4a5-454e-8ca8-b588fe415b4e'
+            // style={{margin: 'auto', width:'190px'}}
+            // IdentityPoolId='us-east-1:945b28bc-b4a5-454e-8ca8-b588fe415b4e'
+            graphScopes={['user.read']}
           />
           <br/>
           <GoogleLogin 
