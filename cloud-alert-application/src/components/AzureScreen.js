@@ -3,11 +3,14 @@ import React from 'react';
 function AzureScreen(props) {
     let json_data = [];
     console.log(props.data.data);
+    console.log(props.data.data.length);
+    console.log(props.data.data[0]);
     if (props.data.service == 'Google' & props.data.data != ''){
         for (let i = 0; i < props.data.data.length; i++) {
-            json_data.push(<h2>Project Name: {props.data.data[i].name}</h2>);
-            json_data.push(<h3>Project ID: {props.data.data[i].projectId}</h3>);
-            json_data.push(<h3>Billing Account: {props.data.data[i].billingAccountName}</h3>);
+            json_data.push(<h2>Billing Account Name: {props.data.data[i].name}</h2>);
+            // json_data.push(<h2>Project Name: {props.data.data[i].name}</h2>);
+            // json_data.push(<h3>Project ID: {props.data.data[i].projectId}</h3>);
+            // json_data.push(<h3>Billing Account: {props.data.data[i].billingAccountName}</h3>);
             json_data.push(<br/>);
         }
     }

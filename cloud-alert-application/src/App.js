@@ -55,27 +55,39 @@ class App extends React.Component {
           .then(async response => {
               const data = await response.json();
               if (data.billingAccounts) {
+                console.log(data);
+                console.log(data.billingAccounts);
                 const project_id = data.billingAccounts[0].name;
                 let url = 'https://cloudbilling.googleapis.com/v1/' + project_id + '/projects';
                 // let url = 'https://billingbudgets.googleapis.com/v1beta1/' + project_id + '/budgets';
                 console.log(url);
-                fetch(url, requestOptions)
-                    .then(async response => {
-                        const data = await response.json();
-                        console.log(data);
+                // fetch(url, requestOptions)
+                //     .then(async response => {
+                //         const data = await response.json();
+                //         console.log(data);
                         
-                        const state = ({
-                          loggedIn: true,
-                          error: '',
-                          name: name,
-                          email: email,
-                          service: 'Google',
-                          data: data.projectBillingInfo
-                        })
+                //         const state = ({
+                //           loggedIn: true,
+                //           error: '',
+                //           name: name,
+                //           email: email,
+                //           service: 'Google',
+                //           data: data.projectBillingInfo
+                //         })
                     
-                        this.onSignIn(state);
+                //         this.onSignIn(state);
 
-                });
+                // });
+
+                const state = ({
+                  loggedIn: true,
+                  error: '',
+                  name: name,
+                  email: email,
+                  service: 'Google',
+                  data: data.billingAccounts
+                })
+                this.onSignIn(state);
               } 
       });
     } 
