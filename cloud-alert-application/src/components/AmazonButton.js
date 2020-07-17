@@ -11,14 +11,13 @@ class Button extends Component {
     render() {
         const { children, triggerLogin, triggerLogout, ...props } = this.props
         const style = {
-        background: '#ffffff',
-        // border: '1px solid black',
-        'border-width': '1px',
-        'border-style': 'solid',
-        'border-color': '#000000',
+        'background-image': 'url("https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png")',
+        'background-repeat': 'no-repeat',
+        'background-size': '100% 100%', // cover
         display: 'inline-block',
         padding: '10px 10px',
-        width: '193px',
+        width: '195px',
+        height: '25px'
         }
 
         return (

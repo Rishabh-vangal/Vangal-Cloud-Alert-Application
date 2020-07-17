@@ -45,12 +45,11 @@ class App extends React.Component {
     let bearer_token = 'Bearer ' + googleUser.accessToken;
     console.log(bearer_token);
 
-    let json_data = [];
-
     try {
       const requestOptions = {
           method: 'GET',
-          headers: {'Authorization': bearer_token}
+          headers: {'Authorization': bearer_token},
+          // mode: 'no-cors'
       };
       fetch('https://cloudbilling.googleapis.com/v1/billingAccounts', requestOptions)
           .then(async response => {
@@ -58,10 +57,12 @@ class App extends React.Component {
               if (data.billingAccounts) {
                 const project_id = data.billingAccounts[0].name;
                 let url = 'https://cloudbilling.googleapis.com/v1/' + project_id + '/projects';
+                // let url = 'https://billingbudgets.googleapis.com/v1beta1/' + project_id + '/budgets';
                 console.log(url);
                 fetch(url, requestOptions)
                     .then(async response => {
                         const data = await response.json();
+                        console.log(data);
                         
                         const state = ({
                           loggedIn: true,
