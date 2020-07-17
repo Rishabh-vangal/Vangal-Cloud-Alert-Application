@@ -71,7 +71,8 @@ function LoginScreen(props) {
       name: name,
       email: email,
       service: 'Azure',
-      data: data
+      data: data,
+      bearerToken: ''
     })
     props.onSignIn(state);
   };
@@ -108,7 +109,8 @@ function LoginScreen(props) {
       name: name,
       email: email,
       service: 'Amazon',
-      data: data
+      data: data,
+      bearerToken: ''
     })
     props.onSignIn(state);
   }

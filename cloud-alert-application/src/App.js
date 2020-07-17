@@ -32,7 +32,8 @@ class App extends React.Component {
       name: state.name,
       email: state.email,
       service: state.service,
-      data: state.data
+      data: state.data,
+      bearerToken: state.bearerToken
     })
   }
 
@@ -61,31 +62,15 @@ class App extends React.Component {
                 let url = 'https://cloudbilling.googleapis.com/v1/' + project_id + '/projects';
                 // let url = 'https://billingbudgets.googleapis.com/v1beta1/' + project_id + '/budgets';
                 console.log(url);
-                // fetch(url, requestOptions)
-                //     .then(async response => {
-                //         const data = await response.json();
-                //         console.log(data);
-                        
-                //         const state = ({
-                //           loggedIn: true,
-                //           error: '',
-                //           name: name,
-                //           email: email,
-                //           service: 'Google',
-                //           data: data.projectBillingInfo
-                //         })
-                    
-                //         this.onSignIn(state);
-
-                // });
-
+                
                 const state = ({
                   loggedIn: true,
                   error: '',
                   name: name,
                   email: email,
                   service: 'Google',
-                  data: data.billingAccounts
+                  data: data.billingAccounts,
+                  bearerToken: bearer_token
                 })
                 this.onSignIn(state);
               } 
