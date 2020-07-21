@@ -5,28 +5,21 @@ import GoogleLogin from 'react-google-login';
 import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 import './../style/LoginScreen.css';
 
+import OauthPopup from 'react-oauth-popup';
 import { AzureAD } from 'react-aad-msal';
 
-let crypto = require("crypto-js");
+ function Azure() {
+  console.log('clicked');
+  let msRestAzure = require('ms-rest-azure');
+  const BillingManagement = require("azure-arm-billing");
 
-function getSignatureKey(key, dateStamp, regionName, serviceName) {
-    //  dateStap format = YYYMMDD
-    //  regionName = 'us-east-1'
-    //  serviceName = 'iam'
-    //
-    var kDate = crypto.HmacSHA256(dateStamp, "AWS4" + key);
-    var kRegion = crypto.HmacSHA256(regionName, kDate);
-    var kService = crypto.HmacSHA256(serviceName, kRegion);
-    var kSigning = crypto.HmacSHA256("aws4_request", kService);
-    return kSigning;
+  msRestAzure.interactiveLogin(function(err, credentials) {
+     if (err) console.log(err);
+     console.log(credentials);
+ });
 }
 
-
 function LoginScreen(props) {
-
-  let signature = getSignatureKey(props.clientID_AWS, '20200717', 'us-east-1', 'iam');
-  console.log(signature);
-
   const onSignInAzure = (err, data) => {
     console.log(data)   
     let email = data.authResponseWithAccessToken.account.userName;
@@ -80,28 +73,9 @@ function LoginScreen(props) {
   const onSignInAmazon = (data) => {
     console.log(data);
 
-    // var config = { 
-    //   apiVersion: '2017-10-25',
-    //   accessKeyId : 'AKIAJVCSKEY3SAMPLE',
-    //   secretAccessKey : 'b5a51a9fa71de7e654643719fe64b2a944ca09415b4cea39a3ed3a9719f6ca82',
-    //   region : 'us-east-1'
-    // }
-
-    // let CostExplorer = require('aws-cost-explorer');
-    // var ce = CostExplorer();
-    // ce.getMonthToDateCosts(null, function(err, data) {
-    //   if (err) {
-    //       console.log(err);
-    //   } else {
-    //       console.dir(data, { depth: null });
-    //       console.log(data);
-    //   }
-    // });
     let email = data.profile.email;
     let name = data.profile.name;
     let loggedIn = true;
-
-
 
     const state = ({
       loggedIn: loggedIn,
@@ -137,11 +111,10 @@ function LoginScreen(props) {
           <MicrosoftLogin 
             clientId={props.clientID_Azure} 
             authCallback={onSignInAzure}
-            // style={{margin: 'auto', width:'190px'}}
-            // IdentityPoolId='us-east-1:945b28bc-b4a5-454e-8ca8-b588fe415b4e'
             graphScopes={['user.read']}
             buttonTheme='light'
           />
+          <button onClick={Azure}>Sign in with Microsoft (new)</button>
           <br/>
           <GoogleLogin 
             clientId={props.clientID_Google} 

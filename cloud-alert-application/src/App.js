@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginScreen from './components/LoginScreen.js';
-import AzureScreen from './components/AzureScreen.js';
+import LoggedInScreen from './components/LoggedInScreen.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -104,13 +104,13 @@ class App extends React.Component {
     else {
       switch(this.state.service) {
         case 'Amazon':
-            return <AzureScreen data={this.state}/>
+            return <LoggedInScreen data={this.state}/>
           break;
         case 'Azure':
-          return <AzureScreen data={this.state}/> 
+          return <LoggedInScreen data={this.state}/> 
           break;
         case "Google":
-          return <AzureScreen data={this.state}/>
+          return <LoggedInScreen data={this.state}/>
           break;
       }
     }
