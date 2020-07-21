@@ -4,22 +4,39 @@ import MicrosoftLogin from "react-microsoft-login";
 import GoogleLogin from 'react-google-login';
 import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 import './../style/LoginScreen.css';
+import axios from 'axios';
 
-import OauthPopup from 'react-oauth-popup';
-import { AzureAD } from 'react-aad-msal';
-
- function Azure() {
-  console.log('clicked');
-  let msRestAzure = require('ms-rest-azure');
-  const BillingManagement = require("azure-arm-billing");
-
-  msRestAzure.interactiveLogin(function(err, credentials) {
-     if (err) console.log(err);
-     console.log(credentials);
- });
-}
 
 function LoginScreen(props) {
+  const onSignInMicrosoft = () => {
+    axios.get('/test').then(response => {
+      console.log(response.data);
+      console.log(response.data.tokenCache._entries);
+      console.log(response.data.tokenCache._entries[1].accessToken);
+      let email = response.data.username;
+      let name = response.data.tokenCache._entries[1].givenName + ' ' + response.data.tokenCache._entries[1].familyName;
+      let loggedIn = true;
+      let bearerToken = 'Bearer ' + response.data.tokenCache._entries[1].accessToken;
+
+      axios.get('https://management.azure.com/providers/Microsoft.Billing/billingAccounts?api-version=2019-10-01-preview', {headers: {'Authorization': bearerToken}})
+        .then(response => {
+            console.log(response.data.value);
+
+            const state = ({
+              loggedIn: loggedIn,
+              error: null,
+              name: name,
+              email: email,
+              service: 'Azure',
+              data: response.data.value,
+              bearerToken: bearerToken
+            })
+            props.onSignIn(state);
+        })
+        .catch(error => console.log(error));     
+    });
+  }
+
   const onSignInAzure = (err, data) => {
     console.log(data)   
     let email = data.authResponseWithAccessToken.account.userName;
@@ -34,28 +51,11 @@ function LoginScreen(props) {
         },
         mode: 'no-cors',
         body: 'client_id=1854d86b-8e91-4db9-846e-0da965c041d6&scope=https://graph.microsoft.com/.default&client_secret=A8-q.GIe4_.J89_-cKglpduI9_jPJ-ijwj&grant_type=client_credentials'
-        // body: JSON.stringify(
-        // {
-        //   client_id: '1854d86b-8e91-4db9-846e-0da965c041d6',
-        //   scope: 'https://graph.microsoft.com/.default',
-        //   client_secret: 'A8-q.GIe4_.J89_-cKglpduI9_jPJ-ijwj',
-        //   grant_type: 'client_credentials'})
     };
     console.log(requestOptions);
     fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', requestOptions)
-      // .then(async (response)=>response.json())
-      //   .then(async (responseJson)=> {
-      //     console.log(responseJson)
-      // });    
-    
-    // .then(async response => {
-    //       // const data = await response;
-    //       const data = await response.json();
-    //       console.log(data);
-            
-    // })
-    .then(response => console.log(response))
-    .catch(error => console.log(error));
+      .then(response => console.log(response))
+      .catch(error => console.log(error));
 
 
     const state = ({
@@ -114,7 +114,7 @@ function LoginScreen(props) {
             graphScopes={['user.read']}
             buttonTheme='light'
           />
-          <button onClick={Azure}>Sign in with Microsoft (new)</button>
+          <button onClick={onSignInMicrosoft}>Sign in with Microsoft (new)</button>
           <br/>
           <GoogleLogin 
             clientId={props.clientID_Google} 
