@@ -9,10 +9,13 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "aws-amplify": "^3.0.19",
+    "aws-billing": "^1.0.0",
     "aws-cost-explorer": "^0.1.2",
+    "awssum": "^1.2.0",
     "axios": "^0.19.2",
     "azure": "^2.3.1-preview",
     "azure-arm-billing": "^2.2.0",
+    "classlist.js": "^1.1.20150312",
     "crypto-js": "^4.0.0",
     "googleapis": "^52.1.0",
     "http2": "^3.3.7",
@@ -30,7 +33,9 @@
     "react-safe": "^1.3.0",
     "react-scripts": "3.4.1",
     "react-social-login": "^3.4.8",
-    "social": "^0.4.0"
+    "react-toastify": "^6.0.8",
+    "social": "^0.4.0",
+    "tap": "^14.10.8"
   },
   "scripts": {
     "start": "react-scripts start",

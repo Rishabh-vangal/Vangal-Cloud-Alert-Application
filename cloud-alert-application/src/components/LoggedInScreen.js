@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 function AzureScreen(props) {
     let json_data_billingAccounts = [];

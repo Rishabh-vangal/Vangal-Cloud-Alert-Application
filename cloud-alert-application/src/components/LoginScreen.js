@@ -1,15 +1,13 @@
 import React from 'react';
 import AmazonButton from './AmazonButton.js'; 
-import MicrosoftLogin from "react-microsoft-login";
 import GoogleLogin from 'react-google-login';
-import { withAuthenticator, AmplifySignOut, AmplifyAmazonButton } from '@aws-amplify/ui-react'
 import './../style/LoginScreen.css';
 import axios from 'axios';
 
 
 function LoginScreen(props) {
   const onSignInMicrosoft = () => {
-    axios.get('/test').then(response => {
+    axios.get('/Azure/SignIn').then(response => {
       console.log(response.data);
       console.log(response.data.tokenCache._entries);
       console.log(response.data.tokenCache._entries[1].accessToken);
@@ -35,6 +33,17 @@ function LoginScreen(props) {
         })
         .catch(error => console.log(error));     
     });
+
+    axios.get('/Azure/SignInCode')
+      .then(response => {
+        console.log(response.data);
+        alert('Enter this code in the popup window to sign in: ' + response.data.Code);
+        let popupWindow = window.open(response.data.URL,'popUpWindow','height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+      })
+      .catch(error => console.log(error));     
+
+
+    
   }
 
   const onSignInAzure = (err, data) => {
@@ -96,7 +105,6 @@ function LoginScreen(props) {
       </center>
       <br/>
       <div style={{margin: 'auto', width:'215px'}}>
-
           <AmazonButton
               provider='amazon'
               appId={props.clientID_AWS}
@@ -108,14 +116,18 @@ function LoginScreen(props) {
                 
           </AmazonButton>
           <br/>
-          <MicrosoftLogin 
-            clientId={props.clientID_Azure} 
-            authCallback={onSignInAzure}
-            graphScopes={['user.read']}
-            buttonTheme='light'
-          />
-          <button onClick={onSignInMicrosoft}>Sign in with Microsoft (new)</button>
+          <button onClick={onSignInMicrosoft} 
+            style={{
+                'background-image': 'url("https://docs.microsoft.com/en-us/azure/active-directory/develop/media/howto-add-branding-in-azure-ad-apps/ms-symbollockup_signin_light.png")', 
+                'background-size': '100% 100%', 
+                display: 'inline-block', 
+                padding: '10px 10px', 
+                width: '215px', 
+                height: '40px', 
+                border: 'none'
+              }}></button>
           <br/>
+          <div style={{height:'5px'}}> </div>
           <GoogleLogin 
             clientId={props.clientID_Google} 
             buttonId="Sign in with Google"
