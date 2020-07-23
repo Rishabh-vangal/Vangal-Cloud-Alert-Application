@@ -1,4 +1,5 @@
 {
+  
   "proxy": "http://167.172.124.9:8080",
   "name": "cloud-alert-application",
   "version": "0.1.0",
