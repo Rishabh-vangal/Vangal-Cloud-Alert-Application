@@ -1,13 +1,28 @@
 const express = require('express');
+const router = require('express').Router();
 const app = express();
 const cors = require('cors');
 
 let AzureData;
+let GoogleData;
 
 app.use(cors());
+app.use(router);
 
 app.get('/Azure/GetCredentialLog', (req, res) => {
     res.send(AzureData);
+});
+
+app.get('/Google/GetCredentialLog', (req, res) => {
+    res.send(GoogleData);
+});
+
+
+router.route('/Google/:id').post((req, res) => {
+    // console.log(req);
+    console.log(req.params.id);
+    GoogleData.push(req.params.id);
+    res.send();
 });
 
 app.get('/AWS', (req, res) => {
@@ -67,12 +82,6 @@ app.get('/Azure/SignIn', (req, res) => {
         }
         AzureData.push(credentials)
         res.send(credentials);
-
-        let client = new BillingManagement(credentials, '0909e1a6-c169-4174-a202-386547f9047e');
-        client.invoices.list().then((invoices) => {
-            console.log('List of invoices: ');
-            console.log(invoices, {depth: null, colors: true});
-        });
     });
 
     setTimeout(function() {
@@ -85,6 +94,7 @@ app.get('/Azure/SignIn', (req, res) => {
 
 app.listen(8080, function() {
     AzureData = [];
+    GoogleData = [];
 
     console.stdlog = console.log.bind(console);
     console.logs = [];

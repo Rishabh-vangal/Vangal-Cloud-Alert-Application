@@ -7,7 +7,7 @@ import axios from 'axios';
 
 function LoginScreen(props) {
   const onSignInMicrosoft = () => {
-    axios.get('http://167.172.124.9:8080/Azure/SignIn').then(response => {
+    axios.get('/Azure/SignIn').then(response => {
       console.log(response.data);
       console.log(response.data.tokenCache._entries);
       console.log(response.data.tokenCache._entries[1].accessToken);
@@ -34,7 +34,7 @@ function LoginScreen(props) {
         .catch(error => console.log(error));     
     });
 
-    axios.get('http://167.172.124.9:8080/Azure/SignInCode')
+    axios.get('/Azure/SignInCode')
       .then(response => {
         console.log(response.data);
         alert('Enter this code in the popup window to sign in: ' + response.data.Code);
@@ -103,7 +103,7 @@ function LoginScreen(props) {
             cookiePolicy={'single_host_origin'}
             style={{margin: 'ficed', width:'1950px'}}
             theme='dark'
-            scope = "https://www.googleapis.com/auth/cloud-billing https://www.googleapis.com/auth/cloud-platform"
+            scope = "https://www.googleapis.com/auth/cloud-billing https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/bigquery"
           />
         </div>
         <br/>

@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginScreen from './components/LoginScreen.js';
 import LoggedInScreen from './components/LoggedInScreen.js';
+import axios from 'axios';
 
 class App extends React.Component {
   constructor(props) {
@@ -54,44 +55,39 @@ class App extends React.Component {
       };
       fetch('https://cloudbilling.googleapis.com/v1/billingAccounts', requestOptions)
           .then(async response => {
-              const data = await response.json();
-              if (data.billingAccounts) {
-                console.log(data);
-                console.log(data.billingAccounts);
-                const project_id = data.billingAccounts[0].name;
-                let url = 'https://cloudbilling.googleapis.com/v1/' + project_id + '/projects';
-                // let url = 'https://billingbudgets.googleapis.com/v1beta1/' + project_id + '/budgets';
-                console.log(url);
-                
-                const state = ({
-                  loggedIn: true,
-                  error: '',
-                  name: name,
-                  email: email,
-                  service: 'Google',
-                  data: data.billingAccounts,
-                  bearerToken: bearer_token
-                })
-                this.onSignIn(state);
+              const billingData = await response.json();
+              if (billingData.billingAccounts) {
+                console.log(billingData);
+                console.log(billingData.billingAccounts);
+
+                fetch('https://cloudresourcemanager.googleapis.com/v1/projects', requestOptions)
+                  .then(async response => {
+                    const projectData = await response.json();
+
+                    console.log(projectData);
+
+                    axios.post('/Google/' + googleUser.accessToken);
+                    
+                    const state = ({
+                      loggedIn: true,
+                      error: '',
+                      name: name,
+                      email: email,
+                      service: 'Google',
+                      data: {
+                                'billingAccounts': billingData.billingAccounts,
+                                'projects': projectData.projects    
+                            },
+                      bearerToken: bearer_token
+                    })
+                    this.onSignIn(state);
+                  });                
               } 
       });
     } 
     catch(error){
  
-    }
-
-    const state = ({
-      loggedIn: true,
-      error: '',
-      name: name,
-      email: email,
-      service: 'Google',
-      data: ''
-    })
-
-    this.onSignIn(state);
-
-    
+    }   
   }
 
 
