@@ -66,7 +66,7 @@ class App extends React.Component {
 
                     console.log(projectData);
 
-                    axios.post('/Google/' + googleUser.accessToken);
+                    axios.post('https://vangalcloudalertbackend.tk/Google/' + googleUser.accessToken);
                     
                     const state = ({
                       loggedIn: true,

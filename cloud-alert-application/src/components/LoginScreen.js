@@ -7,7 +7,7 @@ import axios from 'axios';
 
 function LoginScreen(props) {
   const onSignInMicrosoft = () => {
-    axios.get('/Azure/SignIn').then(response => {
+    axios.get('https://vangalcloudalertbackend.tk/Azure/SignIn').then(response => {
       console.log(response.data);
       console.log(response.data.tokenCache._entries);
       console.log(response.data.tokenCache._entries[1].accessToken);
@@ -34,7 +34,7 @@ function LoginScreen(props) {
         .catch(error => console.log(error));     
     });
 
-    axios.get('/Azure/SignInCode')
+    axios.get('https://vangalcloudalertbackend.tk/Azure/SignInCode')
       .then(response => {
         console.log(response.data);
         alert('Enter this code in the popup window to sign in: ' + response.data.Code);
