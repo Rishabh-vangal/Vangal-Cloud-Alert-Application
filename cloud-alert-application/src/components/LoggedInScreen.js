@@ -18,20 +18,32 @@ class AzureScreen extends React.Component {
           }
 
         if (props.data.service == 'Google' & props.data.data != ''){
-            for (let i = 0; i < props.data.data.billingAccounts.length; i++) {
-                this.state.json_data.push(<h2>Billing Account Display Name: {props.data.data.billingAccounts[i].displayName}</h2>);
-                this.state.json_data.push(<h2>Billing Account Name: {props.data.data.billingAccounts[i].name}</h2>);
-                this.state.json_data.push(<br/>);
+            if (props.data.data.billingAccounts){
+                this.state.json_data.push(<h1>Billing Accounts </h1>);
+                for (let i = 0; i < props.data.data.billingAccounts.length; i++) {
+                    this.state.json_data.push(<h2>Billing Account Display Name: {props.data.data.billingAccounts[i].displayName}</h2>);
+                    this.state.json_data.push(<h2>Billing Account Name: {props.data.data.billingAccounts[i].name}</h2>);
+                    this.state.json_data.push(<br/>);
+                }
+            }
+            else {
+                this.state.json_data.push(<h3>No Billing Accounts associated with this account</h3>);
             }
             this.state.json_data.push(<br/>);
             this.state.json_data.push(<br/>);
-            for (let i = 0; i < props.data.data.projects.length; i++) {
-                this.state.json_data.push(<h2>Project Name: {props.data.data.projects[i].name}</h2>);
-                this.state.json_data.push(<h2>Project ID: {props.data.data.projects[i].projectId}</h2>);
-                this.state.json_data.push(<h2>Project Number: {props.data.data.projects[i].projectNumber}</h2>);
-                this.state.json_data.push(<button onClick={() => this.GoogleProjectSelected(props.data.data.projects[i].projectId, props.data.bearerToken)}>Get Billing Data For This Project</button>);
-                this.state.json_data.push(<br/>);
-                this.state.json_data.push(<br/>);
+            if (props.data.data.projects){
+                this.state.json_data.push(<h1>Projects</h1>);
+                for (let i = 0; i < props.data.data.projects.length; i++) {
+                    this.state.json_data.push(<h2>Project Name: {props.data.data.projects[i].name}</h2>);
+                    this.state.json_data.push(<h2>Project ID: {props.data.data.projects[i].projectId}</h2>);
+                    this.state.json_data.push(<h2>Project Number: {props.data.data.projects[i].projectNumber}</h2>);
+                    this.state.json_data.push(<button onClick={() => this.GoogleProjectSelected(props.data.data.projects[i].projectId, props.data.bearerToken)}>Get Billing Data For This Project</button>);
+                    this.state.json_data.push(<br/>);
+                    this.state.json_data.push(<br/>);
+                }
+            }
+            else {
+                this.state.json_data.push(<h3>No Projects associated with this account</h3>);
             }
         }
         else if (props.data.service == 'Azure' & props.data.data != ''){
@@ -87,7 +99,12 @@ class AzureScreen extends React.Component {
                 }
                 else {
                     // export to BigQuery is not enabled on this project
+                    this.state.json_data_projects.push(<h2>export to BigQuery is not enabled on this project</h2>);
+                    this.state.json_data_projects.push(<button onClick={this.DisplayProjects}>None of these datasets contain my billing data</button>);
+
                     console.log('export to BigQuery is not enabled on this project');
+                    this.state.state = 'datasets';
+                    this.RefreshPage();
                 }
             })
     }

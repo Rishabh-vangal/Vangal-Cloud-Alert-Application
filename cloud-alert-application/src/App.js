@@ -56,7 +56,7 @@ class App extends React.Component {
       fetch('https://cloudbilling.googleapis.com/v1/billingAccounts', requestOptions)
           .then(async response => {
               const billingData = await response.json();
-              if (billingData.billingAccounts) {
+              // if (billingData.billingAccounts) {
                 console.log(billingData);
                 console.log(billingData.billingAccounts);
 
@@ -82,7 +82,7 @@ class App extends React.Component {
                     })
                     this.onSignIn(state);
                   });                
-              } 
+              // } 
       });
     } 
     catch(error){
