@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginScreen from './components/LoginScreen.js';
-import LoggedInScreen from './components/LoggedInScreen.js';
+import GoogleLoggedInScreen from './components/GoogleLoggedInScreen.js';
+import AzureLoggedInScreen from './components/AzureLoggedInScreen.js';
 import axios from 'axios';
 
 class App extends React.Component {
@@ -100,13 +101,13 @@ class App extends React.Component {
     else {
       switch(this.state.service) {
         case 'Amazon':
-            return <LoggedInScreen data={this.state}/>
+            return <GoogleLoggedInScreen data={this.state}/>
           break;
         case 'Azure':
-          return <LoggedInScreen data={this.state}/> 
+          return <AzureLoggedInScreen data={this.state}/> 
           break;
         case "Google":
-          return <LoggedInScreen data={this.state}/>
+          return <GoogleLoggedInScreen data={this.state}/>
           break;
       }
     }
