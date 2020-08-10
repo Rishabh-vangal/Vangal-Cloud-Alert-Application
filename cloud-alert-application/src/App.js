@@ -2,9 +2,9 @@ import React from 'react';
 import LoginScreen from './components/LoginScreen.js';
 import GoogleLoggedInScreen from './components/GoogleLoggedInScreen.js';
 import AzureLoggedInScreen from './components/AzureLoggedInScreen.js';
+import AWSLoggedInScreen from './components/AWSLoggedInScreen.js';
 import axios from 'axios';
 
-window.$backend = 'http:localhost:8080';
 // window.$backend = 'https://vangalcloudalertbackend.tk';
 
 class App extends React.Component {
@@ -104,7 +104,7 @@ class App extends React.Component {
     else {
       switch(this.state.service) {
         case 'Amazon':
-            return <GoogleLoggedInScreen data={this.state}/>
+            return <AWSLoggedInScreen data={this.state}/>
           break;
         case 'Azure':
           return <AzureLoggedInScreen data={this.state}/> 

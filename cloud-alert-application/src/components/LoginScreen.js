@@ -52,17 +52,24 @@ function LoginScreen(props) {
     let email = data.profile.email;
     let name = data.profile.name;
     let loggedIn = true;
+    let accountId = data.profile.id.split(".")[2];
 
-    const state = ({
-      loggedIn: loggedIn,
-      error: null,
-      name: name,
-      email: email,
-      service: 'Amazon',
-      data: data,
-      bearerToken: ''
-    })
-    props.onSignIn(state);
+    axios.get('http://localhost:8080/AWS/' + accountId)
+      .then(response => {
+        if (response){
+          let billingData = response.data;
+          const state = ({
+            loggedIn: loggedIn,
+            error: null,
+            name: name,
+            email: email,
+            service: 'Amazon',
+            data: billingData,
+            bearerToken: ''
+          })
+          props.onSignIn(state);
+        }
+      });
   }
  
   return (
