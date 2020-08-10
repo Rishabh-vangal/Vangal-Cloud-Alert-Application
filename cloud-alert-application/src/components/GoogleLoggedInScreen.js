@@ -1,5 +1,6 @@
 import React from 'react';
 import './../style/LoggedInScreen.css';
+import axios from 'axios';
 
 
 class GoogleScreen extends React.Component {
@@ -8,7 +9,6 @@ class GoogleScreen extends React.Component {
 
         let json_data_billingAccounts = [];
         let json_data_datasets = [];
-        console.log(props.data.data);
 
         this.state = {
             props: props,
@@ -16,7 +16,9 @@ class GoogleScreen extends React.Component {
             state: 'projects',
             json_data_datasets: [],
             json_data_billing_data: [],
-            json_data_tables: []
+            json_data_tables: [],
+            dataset: '',
+            billing_data_timeframe: ''
         }
 
         if (props.data.service == 'Google' & props.data.data != ''){
@@ -48,14 +50,6 @@ class GoogleScreen extends React.Component {
                 this.state.json_data.push(<h3>No Projects associated with this account</h3>);
             }
         }
-        else if (props.data.service == 'Azure' & props.data.data != ''){
-            console.log(props.data.data);
-            for (let i = 0; i < props.data.data.length; i++){
-                this.state.json_data.push(<h2>Billing Account Name: {props.data.data[i].name}</h2>);
-                this.state.json_data.push(<h2>Billing Account ID: {props.data.data[i].id}</h2>);
-                this.state.json_data.push(<br/>);
-            }
-        }
         else {
             this.state.json_data.push(<h3>No Billing Accounts associated with this account</h3>);
         }
@@ -65,6 +59,7 @@ class GoogleScreen extends React.Component {
         this.DisplayBillingData = this.DisplayBillingData.bind(this);
         this.DisplayTables = this.DisplayTables.bind(this);
         this.RefreshPage = this.RefreshPage.bind(this);
+        this.SwitchBillingDataTimeframe = this.SwitchBillingDataTimeframe.bind(this);
     }
 
     GoogleProjectSelected(projectId, bearer_token) {
@@ -72,16 +67,10 @@ class GoogleScreen extends React.Component {
             method: 'GET',
             headers: {'Authorization': bearer_token}
         };
-        console.log(projectId);
-        console.log(bearer_token);
         fetch('https://bigquery.googleapis.com/bigquery/v2/projects/' + projectId + '/datasets', requestOptions)
             .then(async response => {
                 const datasets = await response.json();
-                console.log(datasets);
-                console.log(datasets.datasets);
                 if (datasets.datasets){
-                    console.log('Choose a database: ');
-                    console.log(datasets.datasets);
                     for (let i = 0; i < datasets.datasets.length; i++){
                         this.state.json_data_datasets.push(<h2>Dataset ID: {datasets.datasets[i].id}</h2>);
                         this.state.json_data_datasets.push(<button onClick={() => this.DisplayTables(datasets.datasets[i].id)}>This datasets contains my billing data</button>);
@@ -92,8 +81,6 @@ class GoogleScreen extends React.Component {
                     
                     this.state.state = 'datasets';
                     this.RefreshPage();
-
-                    console.log('state', this.state.state);
                 }
                 else {
                     // export to BigQuery is not enabled on this project
@@ -130,8 +117,7 @@ class GoogleScreen extends React.Component {
         fetch('https://bigquery.googleapis.com/bigquery/v2/projects/' + projectId + '/datasets/' + datasetId + '/tables', requestOptions)
             .then(async response => {
                 const data = await response.json();
-                console.log(data);
-
+                
                 this.state.json_data_tables = [];
                 for (let i = 0; i < data.tables.length; i++){
                     this.state.json_data_tables.push(<h2>Table ID: {data.tables[i].tableReference.tableId}</h2>);
@@ -144,67 +130,49 @@ class GoogleScreen extends React.Component {
 
                 this.state.state = 'tables'
                 this.RefreshPage();
-                console.log(this.state.json_data_datasets);
         });
     }
 
     DisplayBillingData(dataset){
-        let projectId = dataset.split(':')[0];
-        let datasetId = dataset.split(':')[1].split('.')[0];
-        let tableId = dataset.split(':')[1].split('.')[1];
-        const requestOptions = {
-            method: 'GET',
-            headers: {'Authorization': this.state.props.data.bearerToken}
+        this.state.dataset = dataset;
+        this.state.state = 'billing data'
+        this.RefreshPage();
+    }
+
+    SwitchBillingDataTimeframe(newTimeframe){
+        this.state.billing_data_timeframe = newTimeframe;
+        
+        const requestOptions1 = {
+            bearerToken: this.state.props.data.bearerToken,
+            projectId: this.state.dataset.split(':')[0],
+            datasetId: this.state.dataset.split(':')[1].split('.')[0],
+            tableId: this.state.dataset.split(':')[1].split('.')[1],
+            frequency: newTimeframe
         };
 
-        this.state.json_data_billing_data = [];
-        let rows = [];
-        fetch('https://bigquery.googleapis.com/bigquery/v2/projects/' + projectId + '/datasets/' + datasetId + '/tables/' + tableId, requestOptions)
+        axios.post('http://localhost:8080/Google/BillingDataByTime', requestOptions1)
             .then(async response => {
-                const tableHeaders = await response.json();
-                console.log(tableHeaders.schema.fields);
-                let column_names = [];
-                for (let i = 0; i < tableHeaders.schema.fields.length; i++){
-                    if (tableHeaders.schema.fields[i].fields){
-                        for (let j = 0; j < tableHeaders.schema.fields[i].fields.length; j++){
-                            column_names.push(<td>{tableHeaders.schema.fields[i].name + '.' + tableHeaders.schema.fields[i].fields[j].name}</td>);
-                        }
-                    }
-                    else {
-                        column_names.push(<td>{tableHeaders.schema.fields[i].name}</td>);
-                    }
-                }
-                rows.push(<tr>{column_names}</tr>);
+                // const data = await response.json();
+                const data = response.data;
 
-                fetch('https://bigquery.googleapis.com/bigquery/v2/projects/' + projectId + '/datasets/' + datasetId + '/tables/' + tableId + '/data', requestOptions)
-                    .then(async response => {
-                        const data = await response.json();
-                        console.log(data);
-                        
-                        for (let i = 0; i < data.rows.length; i++){
-                            let columns = [];
-                            for (let j = 0; j < data.rows[i].f.length; j++){
-                                if (data.rows[i].f[j].v.f){
-                                    for (let k = 0; k < data.rows[i].f[j].v.f.length; k++){
-                                        columns.push(<td> {data.rows[i].f[j].v.f[k].v} </td>);    
-                                    }
-                                }
-                                else if (!Array.isArray(data.rows[i].f[j].v)){
-                                    columns.push(<td> {data.rows[i].f[j].v} </td>);
-                                }
-                                else {
-                                    columns.push(<td>{JSON.stringify(data.rows[i].f[j].v)}</td>);
-                                }
-                            }
-                            rows.push(<tr>{columns}</tr>);
+                this.state.json_data_billing_data = [];
+                for (let t = 0; t < data.length; t++){
+                    let table = [];
+
+                    for (let i = 0; i < data[t].length; i++){
+                        let row = [];
+                        for (let n = 0; n < data[t][i].length; n++){
+                            row.push(<td>{data[t][i][n]}</td>);
                         }
-                        this.state.json_data_billing_data.push(<table><tbody>{rows}</tbody></table>);
-                        
-                        this.state.state = 'billing data'
-                        this.RefreshPage();
-                        console.log('test: ', this.state.json_data_billing_data);
-                    });
-            });
+                        table.push(<tr>{row}</tr>);
+                    }
+                    this.state.json_data_billing_data.push(<table><tbody>{table}</tbody></table>);
+                    this.state.json_data_billing_data.push(<br/>);
+                    this.state.json_data_billing_data.push(<br/>);
+                    this.state.json_data_billing_data.push(<br/>);
+                }
+                this.RefreshPage();
+            })
     }
 
     render() {
@@ -246,6 +214,11 @@ class GoogleScreen extends React.Component {
                     <h2>You're logged in with {this.props.data.service}</h2>
                     <br/>
                     {this.state.json_data_tables}
+                    <br/>
+                    <button onClick={() => this.SwitchBillingDataTimeframe('day')}>Day</button>
+                    <button onClick={() => this.SwitchBillingDataTimeframe('week')}>Week</button>
+                    <button onClick={() => this.SwitchBillingDataTimeframe('month')}>Month</button>
+                    <button onClick={() => this.SwitchBillingDataTimeframe('year')}>Year</button>
                     <br/>
                     {this.state.json_data_billing_data}               
                 </div>

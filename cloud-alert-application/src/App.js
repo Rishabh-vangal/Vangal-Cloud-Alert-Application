@@ -4,6 +4,9 @@ import GoogleLoggedInScreen from './components/GoogleLoggedInScreen.js';
 import AzureLoggedInScreen from './components/AzureLoggedInScreen.js';
 import axios from 'axios';
 
+window.$backend = 'http:localhost:8080';
+// window.$backend = 'https://vangalcloudalertbackend.tk';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -67,7 +70,7 @@ class App extends React.Component {
 
                     console.log(projectData);
 
-                    axios.post('https://vangalcloudalertbackend.tk/Google/' + googleUser.accessToken);
+                    axios.post(window.$backend + '/Google/' + googleUser.accessToken);
                     
                     const state = ({
                       loggedIn: true,

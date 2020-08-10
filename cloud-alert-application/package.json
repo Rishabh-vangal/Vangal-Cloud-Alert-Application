@@ -1,5 +1,5 @@
 {
-  "proxy": "https://vangalcloudalertbackend.tk",
+  "proxy": "http://localhost:8080",
   "name": "cloud-alert-application",
   "version": "0.1.0",
   "private": true,
