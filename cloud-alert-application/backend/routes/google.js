@@ -79,8 +79,8 @@ router.route('/BillingDataByTime').post((req, res) => {
                         let currStartDate = new Date(row[5] * 1000);
                         let currEndDate = new Date(row[6] * 1000);
                         
-                        row[5] = currStartDate;
-                        row[6] = currEndDate;
+                        row[5] = currStartDate + '';
+                        row[6] = currEndDate.toString();
 
                         switch(req.body.frequency){
                             case 'day':

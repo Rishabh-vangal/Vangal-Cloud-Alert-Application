@@ -47,29 +47,35 @@ function LoginScreen(props) {
   }
 
   const onSignInAmazon = (data) => {
-    console.log(data);
+    let email;
+    let name;
+    let loggedIn;
+    let accountId;
 
-    let email = data.profile.email;
-    let name = data.profile.name;
-    let loggedIn = true;
-    let accountId = data.profile.id.split(".")[2];
+    if (data.profile){
+      console.log(data);
+      email = data.profile.email;
+      name = data.profile.name;
+      loggedIn = true;
+      accountId = data.profile.id.split(".")[2];
+    }
+    else {
+      email = 'data.profile.email';
+      name = 'data.profile.name';
+      loggedIn = true;
+      accountId = 'data.profile.id.split(".")[2]';
+    }
 
-    axios.get('http://localhost:8080/AWS/' + accountId)
-      .then(response => {
-        if (response){
-          let billingData = response.data;
-          const state = ({
-            loggedIn: loggedIn,
-            error: null,
-            name: name,
-            email: email,
-            service: 'Amazon',
-            data: billingData,
-            bearerToken: ''
-          })
-          props.onSignIn(state);
-        }
-      });
+    const state = ({
+      loggedIn: loggedIn,
+      error: null,
+      name: name,
+      email: email,
+      service: 'Amazon',
+      data: null,
+      bearerToken: ''
+    })
+    props.onSignIn(state);
   }
  
   return (
@@ -89,6 +95,8 @@ function LoginScreen(props) {
               key={'amazon'}>
                 
           </AmazonButton>
+          <br/>
+          <button onClick={onSignInAmazon}>Amazon Override</button>
           <br/>
           <button onClick={onSignInMicrosoft} 
             style={{
