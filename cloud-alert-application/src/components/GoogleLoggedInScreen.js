@@ -18,7 +18,8 @@ class GoogleScreen extends React.Component {
             json_data_billing_data: [],
             json_data_tables: [],
             dataset: '',
-            billing_data_timeframe: ''
+            billing_data_timeframe: '',
+            billing_services: []
         }
 
         if (props.data.service == 'Google' & props.data.data != ''){
@@ -53,6 +54,8 @@ class GoogleScreen extends React.Component {
         else {
             this.state.json_data.push(<h3>No Billing Accounts associated with this account</h3>);
         }
+
+        this.state.billing_services.push(<button onClick={() => this.GetBillingByService('All')}>All</button>);
         
         this.GoogleProjectSelected = this.GoogleProjectSelected.bind(this);
         this.DisplayProjects = this.DisplayProjects.bind(this);
@@ -60,6 +63,7 @@ class GoogleScreen extends React.Component {
         this.DisplayTables = this.DisplayTables.bind(this);
         this.RefreshPage = this.RefreshPage.bind(this);
         this.SwitchBillingDataTimeframe = this.SwitchBillingDataTimeframe.bind(this);
+        this.GetBillingByService = this.GetBillingByService.bind(this);
     }
 
     GoogleProjectSelected(projectId, bearer_token) {
@@ -139,6 +143,44 @@ class GoogleScreen extends React.Component {
         this.RefreshPage();
     }
 
+    GetBillingByService(newService){
+        if (newService == 'All'){
+            this.SwitchBillingDataTimeframe(this.state.billing_data_timeframe);
+        }
+
+        const requestOptions = {
+            bearerToken: this.state.props.data.bearerToken,
+            projectId: this.state.dataset.split(':')[0],
+            datasetId: this.state.dataset.split(':')[1].split('.')[0],
+            tableId: this.state.dataset.split(':')[1].split('.')[1],
+            frequency: this.state.billing_data_timeframe,
+            service: newService
+        };
+
+        axios.post('http://localhost:8080/Google/BillingDataByService', requestOptions)
+            .then(async response => {
+                const data = response.data;
+
+                this.state.json_data_billing_data = [];
+                for (let t = 0; t < data.length; t++){
+                    let table = [];
+
+                    for (let i = 0; i < data[t].length; i++){
+                        let row = [];
+                        for (let n = 0; n < data[t][i].length; n++){
+                            row.push(<td>{data[t][i][n]}</td>);
+                        }
+                        table.push(<tr>{row}</tr>);
+                    }
+                    this.state.json_data_billing_data.push(<table><tbody>{table}</tbody></table>);
+                    this.state.json_data_billing_data.push(<br/>);
+                    this.state.json_data_billing_data.push(<br/>);
+                    this.state.json_data_billing_data.push(<br/>);
+                }
+                this.RefreshPage();
+            })
+    }
+
     SwitchBillingDataTimeframe(newTimeframe){
         this.state.billing_data_timeframe = newTimeframe;
         
@@ -171,7 +213,22 @@ class GoogleScreen extends React.Component {
                     this.state.json_data_billing_data.push(<br/>);
                     this.state.json_data_billing_data.push(<br/>);
                 }
-                this.RefreshPage();
+                if (this.state.billing_services.length == 1){
+                    this.state.billing_services = [];
+                    axios.post('http://localhost:8080/Google/BillingServices', requestOptions1)
+                        .then(async response => {
+                            const data = response.data;
+                            
+                            for (let i = 0; i < data.length; i++){
+                                this.state.billing_services.push(<button onClick={() => this.GetBillingByService(data[i])}>{data[i]}</button>);
+                            }
+                            this.state.billing_services.push(<button onClick={() => this.GetBillingByService('All')}>All</button>);
+                            this.RefreshPage();
+                        });
+                }
+                else{
+                    this.RefreshPage();
+                }
             })
     }
 
@@ -214,6 +271,8 @@ class GoogleScreen extends React.Component {
                     <h2>You're logged in with {this.props.data.service}</h2>
                     <br/>
                     {this.state.json_data_tables}
+                    <br/>
+                    Services: {this.state.billing_services}
                     <br/>
                     <button onClick={() => this.SwitchBillingDataTimeframe('day')}>Day</button>
                     <button onClick={() => this.SwitchBillingDataTimeframe('week')}>Week</button>
