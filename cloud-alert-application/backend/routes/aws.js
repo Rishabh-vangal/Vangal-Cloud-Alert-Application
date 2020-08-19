@@ -93,8 +93,6 @@ router.route('/BillingData').post((req, res) => {
             console.log(table[0].length);
             console.log(header.length);
 
-            // console.log(dates);
-
             for (let i = 2; i < dates.length; i++){
               switch(req.body.frequency){
                 case 'day':
@@ -155,6 +153,170 @@ router.route('/BillingData').post((req, res) => {
                 
                 }                        
               }        
+              table.push(currTable);          
+              res.send(table);
+              console.log('Complete');
+              console.log(table.length);              
+          });
+      }
+  });
+});
+
+
+router.route('/BillingServices').post((req, res) => {
+  var AwsS3 = require ('aws-sdk/clients/s3');
+  const s3 = new AwsS3 ({
+    accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
+    secretAccessKey: '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',
+    region: 'us-east-1',
+  });
+
+  async function unzip(data){
+    const {gzip, ungzip} = require('node-gzip');
+    return await ungzip(data);
+  }
+
+  s3.getObject({ Bucket: 'vangal-aws-billing', Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
+  {
+      if (!err) {
+          unzip(data.Body).then((da) => {
+            let dataArray = da.toString().split('\n');
+            services = [];
+            for (let i = 1; i < dataArray.length; i++){
+                let row = [];
+                for (let n = 0; n < dataArray[i].split(',').length; n++){
+                    row.push(dataArray[i].split(',')[n]);
+                }
+                if (row[12] && !services.includes(row[12])){
+                  services.push(row[12]);
+                }
+            }          
+            res.send(services);          
+          });
+      }
+  });
+});
+
+
+/**
+ * required reqest body parameters:
+ * frequency: (day, week, month, year)
+ * service: 
+ */
+router.route('/BillingDataByService').post((req, res) => {
+  var AwsS3 = require ('aws-sdk/clients/s3');
+  const s3 = new AwsS3 ({
+    accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
+    secretAccessKey: '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',
+    region: 'us-east-1',
+  });
+
+  async function unzip(data){
+    const {gzip, ungzip} = require('node-gzip');
+    return await ungzip(data);
+  }
+
+  s3.getObject({ Bucket: 'vangal-aws-billing', Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
+  {
+      if (!err) {
+          unzip(data.Body).then((da) => {
+            let dataArray = da.toString().split('\n');
+            let rows = [];
+            let dates = [];
+            for (let i = 0; i < dataArray.length; i++){
+                let row = [];
+                for (let n = 0; n < dataArray[i].split(',').length; n++){
+                    row.push(dataArray[i].split(',')[n]);
+                }
+
+                try{
+                  let t = row[1].split('T')[0].split('-');
+                  dates.push(new Date(t[0], parseInt(t[1]) - 1, t[2]));
+                }
+                catch(err){}
+                rows.push(row);
+            }
+              
+            sort(rows, dates, 1, dates.length);
+
+            let time;
+
+            let table = [];
+
+            let header = rows[0];
+            let currTable = [];
+            currTable.push(header);         
+            table.push(currTable);
+
+            currTable = [];
+            currTable.push(header);
+
+            console.log(table.length);
+            console.log(table[0].length);
+            console.log(header.length);
+            
+            for (let i = 2; i < dates.length; i++){
+              if (rows[i][12] == req.body.service){
+                switch(req.body.frequency){
+                  case 'day':
+                      if (i == 2){
+                          time = new Date(dates[i]);
+                          time.setDate(time.getDate() + 1);
+                      }
+                      while (dates[i] >= time){
+                          time.setDate(time.getDate() + 1);
+                          table.push(currTable);
+                          currTable = [];
+                          currTable.push(header);
+                      }
+                      currTable.push(rows[i]);
+                      break;
+                  case 'week':
+                      if (i == 2){
+                          time = new Date(dates[i]);
+                          time.setDate(time.getDate() - time.getDay() + 7);
+                          console.log(time);
+                      }
+                      while (dates[i] >= time){
+                          time.setDate(time.getDate() + 7);
+                          table.push(currTable);
+                          currTable = [];
+                          currTable.push(header);
+                      }
+                      currTable.push(rows[i]);
+                      break;
+                  case 'month':
+                      if (i == 2){
+                          time = new Date(dates[i]);
+                          time.setDate(1);
+                          time.setMonth(time.getMonth() + 1);
+                      }
+                      while (dates[i] >= time){
+                          time.setMonth(time.getMonth() + 1);
+                          table.push(currTable);
+                          currTable = [];
+                          currTable.push(header);
+                      }
+                      currTable.push(rows[i]);
+                      break;
+                  default: //year
+                      if (i == 2){
+                          time = new Date(dates[i]);
+                          time.setDate(1);
+                          time.setMonth(0);
+                          time.setYear(time.getFullYear() + 1);
+                      }
+                      while (dates[i] >= time){
+                          time.setYear(time.getFullYear() + 1);
+                          table.push(currTable);
+                          currTable = [];
+                          currTable.push(header);
+                      }
+                      currTable.push(rows[i]);
+                  
+                  }                        
+                }        
+              }
               table.push(currTable);          
               res.send(table);
               console.log('Complete');

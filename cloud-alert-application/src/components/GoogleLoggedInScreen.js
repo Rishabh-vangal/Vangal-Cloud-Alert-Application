@@ -146,6 +146,7 @@ class GoogleScreen extends React.Component {
     GetBillingByService(newService){
         if (newService == 'All'){
             this.SwitchBillingDataTimeframe(this.state.billing_data_timeframe);
+            return;
         }
 
         const requestOptions = {
@@ -272,8 +273,10 @@ class GoogleScreen extends React.Component {
                     <br/>
                     {this.state.json_data_tables}
                     <br/>
+                    <br/>
                     Services: {this.state.billing_services}
                     <br/>
+                    Timespan:
                     <button onClick={() => this.SwitchBillingDataTimeframe('day')}>Day</button>
                     <button onClick={() => this.SwitchBillingDataTimeframe('week')}>Week</button>
                     <button onClick={() => this.SwitchBillingDataTimeframe('month')}>Month</button>
