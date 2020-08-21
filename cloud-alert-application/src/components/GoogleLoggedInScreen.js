@@ -158,7 +158,7 @@ class GoogleScreen extends React.Component {
             service: newService
         };
 
-        axios.post('http://localhost:8080/Google/BillingDataByService', requestOptions)
+        axios.post('https://vangalcloudalertbackend.tk/Google/BillingDataByService', requestOptions)
             .then(async response => {
                 const data = response.data;
 
@@ -193,7 +193,7 @@ class GoogleScreen extends React.Component {
             frequency: newTimeframe
         };
 
-        axios.post('http://localhost:8080/Google/BillingDataByTime', requestOptions1)
+        axios.post('https://vangalcloudalertbackend.tk/Google/BillingDataByTime', requestOptions1)
             .then(async response => {
                 // const data = await response.json();
                 const data = response.data;
@@ -216,7 +216,7 @@ class GoogleScreen extends React.Component {
                 }
                 if (this.state.billing_services.length == 1){
                     this.state.billing_services = [];
-                    axios.post('http://localhost:8080/Google/BillingServices', requestOptions1)
+                    axios.post('https://vangalcloudalertbackend.tk/Google/BillingServices', requestOptions1)
                         .then(async response => {
                             const data = response.data;
                             

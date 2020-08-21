@@ -1,5 +1,10 @@
 const router = require('express').Router();
 
+/**
+ *     accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
+    secretAccessKey: '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',
+ */
+
 // helper function for quick sort algorithm
 function partition(arr, arrDates, low, high){
   let pivot = arrDates[high];
@@ -44,8 +49,8 @@ function sort(arr, arrDates, low, high){
 router.route('/BillingData').post((req, res) => {
   var AwsS3 = require ('aws-sdk/clients/s3');
   const s3 = new AwsS3 ({
-    accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
-    secretAccessKey: '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',
+    accessKeyId: req.body.accessKeyId,
+    secretAccessKey: req.body.secretAccessKey,
     region: 'us-east-1',
   });
 
@@ -89,10 +94,6 @@ router.route('/BillingData').post((req, res) => {
             currTable = [];
             currTable.push(header);
 
-            console.log(table.length);
-            console.log(table[0].length);
-            console.log(header.length);
-
             for (let i = 2; i < dates.length; i++){
               switch(req.body.frequency){
                 case 'day':
@@ -112,7 +113,6 @@ router.route('/BillingData').post((req, res) => {
                     if (i == 2){
                         time = new Date(dates[i]);
                         time.setDate(time.getDate() - time.getDay() + 7);
-                        console.log(time);
                     }
                     while (dates[i] >= time){
                         time.setDate(time.getDate() + 7);
@@ -154,9 +154,7 @@ router.route('/BillingData').post((req, res) => {
                 }                        
               }        
               table.push(currTable);          
-              res.send(table);
-              console.log('Complete');
-              console.log(table.length);              
+              res.send(table);  
           });
       }
   });
@@ -166,8 +164,8 @@ router.route('/BillingData').post((req, res) => {
 router.route('/BillingServices').post((req, res) => {
   var AwsS3 = require ('aws-sdk/clients/s3');
   const s3 = new AwsS3 ({
-    accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
-    secretAccessKey: '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',
+    accessKeyId: req.body.accessKeyId,
+    secretAccessKey: req.body.secretAccessKey,
     region: 'us-east-1',
   });
 
@@ -206,8 +204,8 @@ router.route('/BillingServices').post((req, res) => {
 router.route('/BillingDataByService').post((req, res) => {
   var AwsS3 = require ('aws-sdk/clients/s3');
   const s3 = new AwsS3 ({
-    accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
-    secretAccessKey: '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',
+    accessKeyId: req.body.accessKeyId,
+    secretAccessKey: req.body.secretAccessKey,
     region: 'us-east-1',
   });
 
@@ -250,10 +248,6 @@ router.route('/BillingDataByService').post((req, res) => {
 
             currTable = [];
             currTable.push(header);
-
-            console.log(table.length);
-            console.log(table[0].length);
-            console.log(header.length);
             
             for (let i = 2; i < dates.length; i++){
               if (rows[i][12] == req.body.service){
@@ -275,7 +269,6 @@ router.route('/BillingDataByService').post((req, res) => {
                       if (i == 2){
                           time = new Date(dates[i]);
                           time.setDate(time.getDate() - time.getDay() + 7);
-                          console.log(time);
                       }
                       while (dates[i] >= time){
                           time.setDate(time.getDate() + 7);
@@ -318,9 +311,7 @@ router.route('/BillingDataByService').post((req, res) => {
                 }        
               }
               table.push(currTable);          
-              res.send(table);
-              console.log('Complete');
-              console.log(table.length);              
+              res.send(table);       
           });
       }
   });

@@ -12,7 +12,9 @@ class AWSScreen extends React.Component {
             json_data: [],
             state: 'billing accounts',
             timeframe: '',
-            billing_services: []
+            billing_services: [], 
+            accessKeyId: 'accessKeyId', 
+            secretAccessKey: 'secretAccessKey'
         }
 
         this.state.billing_services.push(<button onClick={() => this.GetBillingByService('All')}>All</button>);
@@ -23,10 +25,10 @@ class AWSScreen extends React.Component {
 
         this.SwitchBillingDataTimeframe = this.SwitchBillingDataTimeframe.bind(this);
         this.GetBillingByService = this.GetBillingByService.bind(this);
+        this.handleAWSKeyChange = this.handleAWSKeyChange.bind(this);
     }
 
     GetBillingByService(newService){
-        console.log(newService);
         if (newService == 'All'){
             this.SwitchBillingDataTimeframe(this.state.billing_data_timeframe);
             return;
@@ -36,10 +38,12 @@ class AWSScreen extends React.Component {
 
         const requestOptions = {
             frequency: this.state.timeframe,
-            service: newService
+            service: newService,
+            accessKeyId: this.state.accessKeyId,
+            secretAccessKey: this.state.secretAccessKey
         };
 
-        axios.post('http://localhost:8080/AWS/BillingDataByService', requestOptions)
+        axios.post('https://vangalcloudalertbackend.tk/AWS/BillingDataByService', requestOptions)
         .then(async response => {
             const dataArray = response.data;
 
@@ -67,10 +71,12 @@ class AWSScreen extends React.Component {
         this.state.timeframe = newTimeframe;
 
         const requestOptions = {
-            frequency: newTimeframe
+            frequency: newTimeframe,
+            accessKeyId: this.state.accessKeyId,
+            secretAccessKey: this.state.secretAccessKey
         };
 
-        axios.post('http://localhost:8080/AWS/BillingData', requestOptions)
+        axios.post('https://vangalcloudalertbackend.tk/AWS/BillingData', requestOptions)
         .then(async response => {
             const dataArray = response.data;
 
@@ -90,7 +96,7 @@ class AWSScreen extends React.Component {
             }
             if (this.state.billing_services.length == 1){
                 this.state.billing_services = [];
-                axios.post('http://localhost:8080/AWS/BillingServices', requestOptions)
+                axios.post('https://vangalcloudalertbackend.tk/AWS/BillingServices', requestOptions)
                     .then(async response => {
                         const data = response.data;
 
@@ -107,11 +113,32 @@ class AWSScreen extends React.Component {
         });    
     }
 
+    handleAWSKeyChange(key, type){
+        if (type == 'accessKeyId'){
+            this.state.accessKeyId = key;
+        }
+        else if (type == 'secretAccessKey'){
+            this.state.secretAccessKey = key;
+        }
+
+        console.log(this.state.accessKeyId);
+        console.log(this.state.secretAccessKey);
+    }
+
     render() {  
         return (
             <div>
-                <h1>Welcome {this.props.data.name}</h1>
+                <h1>Welcome</h1>
                 <h2>You're logged in with {this.props.data.service}</h2>
+                <br/>
+                <br/>
+                AWS accessKeyId:
+                <input type="text" onChange={e => this.handleAWSKeyChange(e.target.value, 'accessKeyId')}/>
+                <br/>
+                AWS secretAccessKey:
+                <input type="text" onChange={e => this.handleAWSKeyChange(e.target.value, 'secretAccessKey')}/>
+                <br/>
+                <br/>
                 <br/>
                 <br/>
                 Services: {this.state.billing_services}
