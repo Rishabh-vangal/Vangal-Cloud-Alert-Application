@@ -1,10 +1,5 @@
 const router = require('express').Router();
 
-/**
- *     accessKeyId: 'AKIAIOZSLPXFVGFVBD6A',
-    secretAccessKey: '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',
- */
-
 // helper function for quick sort algorithm
 function partition(arr, arrDates, low, high){
   let pivot = arrDates[high];
@@ -59,7 +54,7 @@ router.route('/BillingData').post((req, res) => {
     return await ungzip(data);
   }
 
-  s3.getObject({ Bucket: 'vangal-aws-billing', Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
+  s3.getObject({ Bucket: req.body.bucketName, Key: '/' + req.body.reportName +  '/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
   {
       if (!err) {
           unzip(data.Body).then((da) => {
@@ -174,7 +169,7 @@ router.route('/BillingServices').post((req, res) => {
     return await ungzip(data);
   }
 
-  s3.getObject({ Bucket: 'vangal-aws-billing', Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
+  s3.getObject({ Bucket: req.body.bucketName, Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
   {
       if (!err) {
           unzip(data.Body).then((da) => {
@@ -214,7 +209,7 @@ router.route('/BillingDataByService').post((req, res) => {
     return await ungzip(data);
   }
 
-  s3.getObject({ Bucket: 'vangal-aws-billing', Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
+  s3.getObject({ Bucket: req.body.bucketName, Key: '/report-0/20200801-20200901/report-0-00001.csv.gz' }, function(err, data)
   {
       if (!err) {
           unzip(data.Body).then((da) => {

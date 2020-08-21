@@ -13,8 +13,10 @@ class AWSScreen extends React.Component {
             state: 'billing accounts',
             timeframe: '',
             billing_services: [], 
-            accessKeyId: 'accessKeyId', 
-            secretAccessKey: 'secretAccessKey'
+            accessKeyId: '', 
+            secretAccessKey: '',
+            bucketName: '',
+            reportName: ''
         }
 
         this.state.billing_services.push(<button onClick={() => this.GetBillingByService('All')}>All</button>);
@@ -40,7 +42,9 @@ class AWSScreen extends React.Component {
             frequency: this.state.timeframe,
             service: newService,
             accessKeyId: this.state.accessKeyId,
-            secretAccessKey: this.state.secretAccessKey
+            secretAccessKey: this.state.secretAccessKey,
+            bucketName: this.state.bucketName,
+            reportName: this.state.reportName
         };
 
         axios.post('https://vangalcloudalertbackend.tk/AWS/BillingDataByService', requestOptions)
@@ -73,7 +77,9 @@ class AWSScreen extends React.Component {
         const requestOptions = {
             frequency: newTimeframe,
             accessKeyId: this.state.accessKeyId,
-            secretAccessKey: this.state.secretAccessKey
+            secretAccessKey: this.state.secretAccessKey,
+            bucketName: this.state.bucketName,
+            reportName: this.state.reportName
         };
 
         axios.post('https://vangalcloudalertbackend.tk/AWS/BillingData', requestOptions)
@@ -120,6 +126,12 @@ class AWSScreen extends React.Component {
         else if (type == 'secretAccessKey'){
             this.state.secretAccessKey = key;
         }
+        else if (type == 'bucketName'){
+            this.state.bucketName = key;
+        }
+        else if (type == 'reportName'){
+            this.state.reportName = key;
+        }
 
         console.log(this.state.accessKeyId);
         console.log(this.state.secretAccessKey);
@@ -138,6 +150,16 @@ class AWSScreen extends React.Component {
                 AWS secretAccessKey:
                 <input type="text" onChange={e => this.handleAWSKeyChange(e.target.value, 'secretAccessKey')}/>
                 <br/>
+                Bucket Name:
+                <input type="text" onChange={e => this.handleAWSKeyChange(e.target.value, 'bucketName')}/>
+                <br/>
+                Report Name:
+                <input type="text" onChange={e => this.handleAWSKeyChange(e.target.value, 'reportName')}/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                If you do not already have Cost and Usage Reports Setup with your AWS account, go to: <a href="https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html">https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html</a> and follow the steps to create Usage reporsts to an S3 Buket.
                 <br/>
                 <br/>
                 <br/>

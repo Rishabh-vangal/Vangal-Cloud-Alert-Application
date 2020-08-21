@@ -240,6 +240,8 @@ class GoogleScreen extends React.Component {
                     <h1>Welcome {this.state.props.data.name}</h1>
                     <h2>You're logged in with {this.state.props.data.service}</h2>
                     <br/>
+                    If you do not already have Billing Data export to BigQuery already setup, go to: <a href="https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup">https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup</a>  to setup up export to BigQuery. 
+                    <br/>
                     {this.state.json_data}           
                     
                 </div>
@@ -251,6 +253,8 @@ class GoogleScreen extends React.Component {
                     <h1>Welcome {this.props.data.name}</h1>
                     <h2>You're logged in with {this.props.data.service}</h2>
                     <br/>
+                    If you do not already have Billing Data export to BigQuery already setup, go to: <a href="https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup">https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup</a>  to setup up export to BigQuery. 
+                    <br/>
                     {this.state.json_data_datasets}
                 </div>
             );
@@ -261,6 +265,8 @@ class GoogleScreen extends React.Component {
                     <h1>Welcome {this.props.data.name}</h1>
                     <h2>You're logged in with {this.props.data.service}</h2>
                     <br/>
+                    If you do not already have Billing Data export to BigQuery already setup, go to: <a href="https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup">https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup</a>  to setup up export to BigQuery. 
+                    <br/>
                     {this.state.json_data_tables}               
                 </div>
             );
@@ -270,6 +276,8 @@ class GoogleScreen extends React.Component {
                 <div>
                     <h1>Welcome {this.props.data.name}</h1>
                     <h2>You're logged in with {this.props.data.service}</h2>
+                    <br/>
+                    If you do not already have Billing Data export to BigQuery already setup, go to: <a href="https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup">https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup</a>  to setup up export to BigQuery. 
                     <br/>
                     {this.state.json_data_tables}
                     <br/>
